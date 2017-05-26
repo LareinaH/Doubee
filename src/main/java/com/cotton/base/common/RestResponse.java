@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class RestResponse<T> implements Serializable {
     public static final String OK = "ok";
+    public static final String ERROR = "error";
     public static final String LoginTimeout = "LoginTimeout";
     private static final long serialVersionUID = 4843066638830850455L;
 
@@ -12,6 +13,7 @@ public class RestResponse<T> implements Serializable {
     private T data;
 
     public RestResponse() {
+        this.code = ERROR;
     }
 
     public RestResponse(String code, String message) {
