@@ -41,8 +41,6 @@ public class VideoController {
 
     //视频列表（包含视频列表/手气不错/用户上传的列表/收藏的视频列表）
 
-
     //视频评论
-
 
 }

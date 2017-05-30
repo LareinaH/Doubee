@@ -38,8 +38,20 @@ public class MemberController {
 
     }
 
-
     //我的标签（爱好）
+    @ResponseBody
+    @RequestMapping(name = "/myTags")
+    public RestResponse<Map<String, Object>> myTags() {
+
+        RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
+        Map<String, Object> map = new HashMap<String, Object>();
+        restResponse.setData(map);
+
+        //TODO:
+
+        return restResponse;
+
+    }
 
     //我的订阅
 
