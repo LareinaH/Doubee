@@ -16,7 +16,7 @@ import java.util.*;
  */
 
 @Controller
-@RequestMapping("member")
+@RequestMapping("/member")
 public class MemberController {
 
     private Logger logger = LoggerFactory.getLogger(MemberController.class);
@@ -25,7 +25,7 @@ public class MemberController {
     private MemberService memberService;
 
     @ResponseBody
-    @RequestMapping(name = "/example")
+    @RequestMapping(value = "/example")
     public RestResponse<Map<String, Object>> example() {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
@@ -40,7 +40,7 @@ public class MemberController {
 
     //我的标签（爱好）
     @ResponseBody
-    @RequestMapping(name = "/myTags")
+    @RequestMapping(value = "/myTags")
     public RestResponse<Map<String, Object>> myTags() {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();

@@ -16,7 +16,7 @@ import java.util.*;
  */
 
 @Controller
-@RequestMapping("video")
+@RequestMapping("/video")
 public class VideoController {
 
     private Logger logger = LoggerFactory.getLogger(VideoController.class);
@@ -26,7 +26,7 @@ public class VideoController {
 
 
     @ResponseBody
-    @RequestMapping(name = "/example")
+    @RequestMapping(value = "/example")
     public RestResponse<Map<String, Object>> example() {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
