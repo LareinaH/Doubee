@@ -4,7 +4,6 @@ import com.cotton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
 
-
 @Table(name = "video")
 public class Video extends BaseModel {
     @Id
@@ -48,6 +47,11 @@ public class Video extends BaseModel {
     private Long dislikeCount;
 
     private Long browseCount;
+
+    /**
+     * 评论数
+     */
+    private Long commentCount;
 
     /**
      * 状态【normal-正常，delete-删除】
@@ -240,6 +244,24 @@ public class Video extends BaseModel {
      */
     public void setBrowseCount(Long browseCount) {
         this.browseCount = browseCount;
+    }
+
+    /**
+     * 获取评论数
+     *
+     * @return commentCount - 评论数
+     */
+    public Long getCommentCount() {
+        return commentCount;
+    }
+
+    /**
+     * 设置评论数
+     *
+     * @param commentCount 评论数
+     */
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 
     /**

@@ -21,7 +21,7 @@ public class MemberSubscription extends BaseModel {
     /**
      * 被订阅者Id
      */
-    private Long tagId;
+    private Long publisherId;
 
     /**
      * 状态【normal-正常，delete-删除】
@@ -77,19 +77,19 @@ public class MemberSubscription extends BaseModel {
     /**
      * 获取被订阅者Id
      *
-     * @return tagId - 被订阅者Id
+     * @return publisherId - 被订阅者Id
      */
-    public Long getTagId() {
-        return tagId;
+    public Long getPublisherId() {
+        return publisherId;
     }
 
     /**
      * 设置被订阅者Id
      *
-     * @param tagId 被订阅者Id
+     * @param publisherId 被订阅者Id
      */
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
+    public void setPublisherId(Long publisherId) {
+        this.publisherId = publisherId;
     }
 
     /**

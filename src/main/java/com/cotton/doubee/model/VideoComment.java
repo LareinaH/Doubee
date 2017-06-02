@@ -26,6 +26,16 @@ public class VideoComment extends BaseModel {
     private Long commentMemberId;
 
     /**
+     * 点赞数
+     */
+    private Long likeCount;
+
+    /**
+     * 点踩的个数
+     */
+    private Long dislikeCount;
+
+    /**
      * 状态【normal:正常 delete 删除】
      */
     private String status;
@@ -111,6 +121,42 @@ public class VideoComment extends BaseModel {
      */
     public void setCommentMemberId(Long commentMemberId) {
         this.commentMemberId = commentMemberId;
+    }
+
+    /**
+     * 获取点赞数
+     *
+     * @return likeCount - 点赞数
+     */
+    public Long getLikeCount() {
+        return likeCount;
+    }
+
+    /**
+     * 设置点赞数
+     *
+     * @param likeCount 点赞数
+     */
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    /**
+     * 获取点踩的个数
+     *
+     * @return dislikeCount - 点踩的个数
+     */
+    public Long getDislikeCount() {
+        return dislikeCount;
+    }
+
+    /**
+     * 设置点踩的个数
+     *
+     * @param dislikeCount 点踩的个数
+     */
+    public void setDislikeCount(Long dislikeCount) {
+        this.dislikeCount = dislikeCount;
     }
 
     /**

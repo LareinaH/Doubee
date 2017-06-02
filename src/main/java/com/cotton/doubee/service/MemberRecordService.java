@@ -8,4 +8,6 @@ import com.cotton.doubee.model.MemberRecord;
  */
 
 public interface MemberRecordService extends BaseService<MemberRecord> {
+
+    boolean addRecord(MemberRecord memberRecord);
 }

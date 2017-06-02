@@ -119,8 +119,6 @@
             <version>3.3.2</version>
         </dependency>
 
-
-
        <!--缓存-->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -143,15 +141,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.2</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>youku</groupId>
-            <artifactId>YoukuUpload_java_sdk</artifactId>
-            <version>1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/YoukuUpload_java_sdk.jar</systemPath>
         </dependency>
 
     </dependencies>

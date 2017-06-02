@@ -8,4 +8,6 @@ import com.cotton.doubee.model.VideoComment;
  */
 
 public interface VideoCommentService extends BaseService<VideoComment> {
+
+    boolean addComment(VideoComment videoComment);
 }

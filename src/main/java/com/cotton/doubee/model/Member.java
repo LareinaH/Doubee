@@ -3,8 +3,6 @@ package com.cotton.doubee.model;
 import com.cotton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
-
-
 @Table(name = "member")
 public class Member extends BaseModel {
     @Id
@@ -37,6 +35,11 @@ public class Member extends BaseModel {
     private String name;
 
     /**
+     * 描述
+     */
+    private String discription;
+
+    /**
      * 电话
      */
     private String cellphone;
@@ -55,6 +58,11 @@ public class Member extends BaseModel {
      * 头像
      */
     private String headPortrait;
+
+    /**
+     * 被订阅数
+     */
+    private Integer subscribedCount;
 
     /**
      * 会员状态【normal-正常,cancle-注销,delete-删除】
@@ -176,6 +184,24 @@ public class Member extends BaseModel {
     }
 
     /**
+     * 获取描述
+     *
+     * @return discription - 描述
+     */
+    public String getDiscription() {
+        return discription;
+    }
+
+    /**
+     * 设置描述
+     *
+     * @param discription 描述
+     */
+    public void setDiscription(String discription) {
+        this.discription = discription == null ? null : discription.trim();
+    }
+
+    /**
      * 获取电话
      *
      * @return cellphone - 电话
@@ -245,6 +271,24 @@ public class Member extends BaseModel {
      */
     public void setHeadPortrait(String headPortrait) {
         this.headPortrait = headPortrait == null ? null : headPortrait.trim();
+    }
+
+    /**
+     * 获取被订阅数
+     *
+     * @return subscribedCount - 被订阅数
+     */
+    public Integer getSubscribedCount() {
+        return subscribedCount;
+    }
+
+    /**
+     * 设置被订阅数
+     *
+     * @param subscribedCount 被订阅数
+     */
+    public void setSubscribedCount(Integer subscribedCount) {
+        this.subscribedCount = subscribedCount;
     }
 
     /**

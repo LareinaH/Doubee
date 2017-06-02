@@ -1,23 +1,24 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cotton.doubee.mapper.VideoMapper" >
-  <resultMap id="BaseResultMap" type="com.cotton.doubee.model.Video" >
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cotton.doubee.mapper.VideoMapper">
+  <resultMap id="BaseResultMap" type="com.cotton.doubee.model.Video">
     <!--
       WARNING - @mbggenerated
     -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="providerId" property="providerId" jdbcType="BIGINT" />
-    <result column="title" property="title" jdbcType="VARCHAR" />
-    <result column="subhead" property="subhead" jdbcType="VARCHAR" />
-    <result column="length" property="length" jdbcType="BIGINT" />
-    <result column="posterUrl" property="posterUrl" jdbcType="VARCHAR" />
-    <result column="url" property="url" jdbcType="VARCHAR" />
-    <result column="tags" property="tags" jdbcType="VARCHAR" />
-    <result column="likeCount" property="likeCount" jdbcType="BIGINT" />
-    <result column="dislikeCount" property="dislikeCount" jdbcType="BIGINT" />
-    <result column="browseCount" property="browseCount" jdbcType="BIGINT" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="createdAt" property="createdAt" jdbcType="TIMESTAMP" />
-    <result column="updateAt" property="updateAt" jdbcType="TIMESTAMP" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="providerId" jdbcType="BIGINT" property="providerId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="subhead" jdbcType="VARCHAR" property="subhead" />
+    <result column="length" jdbcType="BIGINT" property="length" />
+    <result column="posterUrl" jdbcType="VARCHAR" property="posterUrl" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="likeCount" jdbcType="BIGINT" property="likeCount" />
+    <result column="dislikeCount" jdbcType="BIGINT" property="dislikeCount" />
+    <result column="browseCount" jdbcType="BIGINT" property="browseCount" />
+    <result column="commentCount" jdbcType="BIGINT" property="commentCount" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
   </resultMap>
 </mapper>

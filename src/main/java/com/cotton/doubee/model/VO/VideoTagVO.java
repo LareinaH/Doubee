@@ -1,5 +1,7 @@
 package com.cotton.doubee.model.VO;
 
+import com.cotton.doubee.model.VideoTag;
+
 /**
  * Created by Administrator on 2017-05-26.
  */
@@ -17,6 +19,11 @@ public class VideoTagVO {
      */
     private boolean bLike;
 
+    public VideoTagVO(VideoTag videoTag) {
+        this.id = videoTag.getId();
+        this.name = videoTag.getName();
+        this.bLike = false;
+    }
 
     public Long getId() {
         return id;
