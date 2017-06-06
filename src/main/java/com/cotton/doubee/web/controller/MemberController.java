@@ -3,6 +3,7 @@ package com.cotton.doubee.web.controller;
 import com.cotton.base.common.RestResponse;
 import com.cotton.base.enumeration.Status;
 import com.cotton.doubee.model.*;
+import com.cotton.doubee.model.VO.MemberSubscriptionVO;
 import com.cotton.doubee.model.VO.MemberVO;
 import com.cotton.doubee.model.VO.VideoTagVO;
 import com.cotton.doubee.service.*;
@@ -54,6 +55,10 @@ public class MemberController {
 
     }
 
+    /**
+     * 会员信息
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/memberInfo")
     public RestResponse<Map<String, Object>> memberInfo() {
@@ -211,7 +216,12 @@ public class MemberController {
     }
 
 
-    //我的订阅
+    /**
+     *  我的订阅
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/memberSubscriptions")
     public RestResponse<Map<String, Object>> memberSubscriptions(int pageNum, int pageSize) {
@@ -225,16 +235,16 @@ public class MemberController {
         Map<String, Object> map = new HashMap<String, Object>();
         restResponse.setData(map);
 
-        MemberSubscription model = new MemberSubscription();
-        model.setMemberId(member.getId());
-        model.setStatus(Status.normal.toString());
+        Map<String,Object> condition = new HashMap<String, Object>();
+        condition.put("memberId",member.getId());
+        condition.put("status",Status.normal.toString());
 
-        PageInfo<MemberSubscription> memberSubscriptionPageInfo = memberSubscriptionService.query(pageNum, pageSize, model);
+        PageInfo<MemberSubscriptionVO> memberSubscriptionPageInfo = memberSubscriptionService.queryVO(pageNum, pageSize, condition);
 
         if (memberSubscriptionPageInfo != null) {
 
             restResponse.setCode(RestResponse.OK);
-            map.put("pageInfo", memberSubscriptionPageInfo);
+            map.put("pageList", memberSubscriptionPageInfo);
 
         } else {
             restResponse.setMessage("读取用户订阅失败！");
@@ -246,7 +256,14 @@ public class MemberController {
     }
 
 
-    //添加取消订阅
+    //
+
+    /**
+     * 添加取消订阅
+     * @param operation add|cancel
+     * @param publisherId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/editMemberSubscription")
     public RestResponse<Map<String, Object>> memberSubscriptions(String operation, Long publisherId) {
