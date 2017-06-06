@@ -120,7 +120,7 @@ public class MemberController {
         List<Long> tagIds = new LinkedList<Long>();
 
         for (MemberTag tag : memberTagList) {
-            tagIds.add(tag.getId());
+            tagIds.add(tag.getTagId());
         }
 
         List<VideoTagVO> videoTagVOList = new ArrayList<VideoTagVO>();
