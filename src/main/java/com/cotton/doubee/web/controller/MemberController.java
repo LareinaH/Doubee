@@ -144,8 +144,8 @@ public class MemberController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/editVideoTags/{tagId}")
-    public RestResponse<Map<String, Object>> editVideoTags(@PathVariable Long tagId,
+    @RequestMapping(value = "/editVideoTag")
+    public RestResponse<Map<String, Object>> editVideoTags(Long tagId,
                                                            String likeStatus) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
@@ -248,7 +248,7 @@ public class MemberController {
 
     //添加取消订阅
     @ResponseBody
-    @RequestMapping(value = "/editMemberSubscriptions")
+    @RequestMapping(value = "/editMemberSubscription")
     public RestResponse<Map<String, Object>> memberSubscriptions(String operation, Long publisherId) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
