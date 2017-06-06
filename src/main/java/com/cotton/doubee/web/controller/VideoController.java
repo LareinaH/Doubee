@@ -1,8 +1,10 @@
 package com.cotton.doubee.web.controller;
 
 import com.cotton.base.common.RestResponse;
+import com.cotton.base.controller.BaseController;
 import com.cotton.base.enumeration.Status;
 import com.cotton.doubee.model.*;
+import com.cotton.doubee.model.VO.VideoCommentVO;
 import com.cotton.doubee.service.MemberFavoriteService;
 import com.cotton.doubee.service.MemberRecordService;
 import com.cotton.doubee.service.VideoCommentService;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -25,7 +28,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/video")
-public class VideoController {
+public class VideoController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(VideoController.class);
 
@@ -81,14 +84,39 @@ public class VideoController {
 
     }
 
-    //视频评论
+    /**
+     * 视频评论
+     * @param type  latest-选取最热的五条（和一条当前用户的） list-分页显示
+     * @param videoId 视频id
+     * @param pageNum 当前页（从1开始）-仅在type=list的时候有效
+     * @param pageSize 页大小-仅在type=list的时候有效
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/videoComments")
-    public RestResponse<Map<String, Object>> videoComments(int pageNum, int pageSize, long videoId) {
+    public RestResponse<Map<String, Object>> videoComments(@RequestParam(required = true) String type,
+                                                           @RequestParam(required = true) long videoId,
+                                                           @RequestParam(defaultValue = "0") int pageNum,
+                                                           @RequestParam(defaultValue = "0") int pageSize) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-        restResponse.setData(map);
+
+        if(StringUtils.isEmpty(type) || !(type.equals("latest") || type.equals("list"))){
+            restResponse.setMessage("type 不能为空，并且只能是 latest | list");
+            return restResponse;
+        }
+
+        if(type.equals("list")){
+
+            if(pageNum == 0 || pageSize == 0){
+                restResponse.setMessage("pageNum 和pageSize 不能为空" );
+                return restResponse;
+            }
+
+        }else {
+            pageNum=1;
+            pageSize=5;
+        }
 
         //校验参数
         Video video = videoService.getById(videoId);
@@ -97,14 +125,56 @@ public class VideoController {
             return restResponse;
         }
 
+        //TODO:获取当前用户：
+        Member member = new Member();
+        member.setId(1L);
+
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        restResponse.setData(map);
+
         //查询评论列表
-        VideoComment model = new VideoComment();
-        model.setStatus(Status.normal.toString());
-        model.setVideoId(videoId);
+        Map<String,Object > condition = new HashMap<String, Object>();
+        condition.put("videoId",videoId);
+        condition.put("status",Status.normal.toString());
 
-        PageInfo<VideoComment> videoCommentPageInfo = videoCommentService.query(pageNum, pageSize, model);
+        if(type.equals("list")){
+            condition.put("orderBy","a.createdAt DESC");
+        }else {
+            condition.put("orderBy","a.likeCount DESC, a.createdAt DESC");
+        }
 
-        if (videoCommentPageInfo != null) {
+        PageInfo<VideoCommentVO> videoCommentPageInfo = videoCommentService.queryVO(pageNum, pageSize, condition);
+
+        if (videoCommentPageInfo != null && videoCommentPageInfo.getList() != null) {
+
+            //取出一条当前用户的一条最新的视频评论
+            if (type.equals("latest")){
+
+                pageNum=1;
+                pageSize=1;
+                condition.put("commentMemberId",member.getId());
+                condition.put("orderBy","a.createdAt DESC");
+
+                List<Long> excludeCommentIdList = new LinkedList<Long>();
+
+                for(VideoCommentVO videoCommentVO : videoCommentPageInfo.getList()){
+                    excludeCommentIdList.add(videoCommentVO.getId());
+
+                }
+                condition.put("excludeCommentIdList",excludeCommentIdList);
+
+                PageInfo<VideoCommentVO> currentUserCommentPageInfo = videoCommentService.queryVO(pageNum, pageSize, condition);
+
+                if(currentUserCommentPageInfo != null
+                        && currentUserCommentPageInfo.getList() != null
+                        && !currentUserCommentPageInfo.getList().isEmpty()){
+                    videoCommentPageInfo.getList().add(currentUserCommentPageInfo.getList().get(0));
+                }
+
+
+            }
+
             restResponse.setCode(RestResponse.OK);
             map.put("pageList", videoCommentPageInfo);
         } else {
@@ -118,7 +188,8 @@ public class VideoController {
 
     @ResponseBody
     @RequestMapping(value = "/addVideoComment")
-    public RestResponse<Map<String, Object>> addVideoComment(long videoId, String commentText) {
+    public RestResponse<Map<String, Object>> addVideoComment(@RequestParam(required = true) long videoId,
+                                                             @RequestParam(required = true) String commentText) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
@@ -162,7 +233,9 @@ public class VideoController {
      */
     @ResponseBody
     @RequestMapping(value = "/operation/{id}")
-    public RestResponse<Map<String, Object>> operation(@PathVariable Long id,String type, String operation) {
+    public RestResponse<Map<String, Object>> operation(@PathVariable Long id,
+                                                       @RequestParam(required = true) String type,
+                                                       @RequestParam(required = true) String operation) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 

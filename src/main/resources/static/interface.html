@@ -37,12 +37,18 @@
 <h2>视频相关</h2>
     <li>列表
         <p> http://47.92.29.192:8082/video/videos?pageNum=1&pageSize=5&type=list&direction=up</p>
+        <p>TODO：</p>
     </li>
     <li>评论列表
-        <p> http://47.92.29.192:8082/video/videoComments?pageNum=1&pageSize=5&videoId=57</p>
+        <p> 分页：http://47.92.29.192:8082/video/videoComments?videoId=57&type=list&pageSize=10&pageNum=1</p>
+        <p> 5条热评：http://47.92.29.192:8082/video/videoComments?videoId=57&type=latest</p>
     </li>
     <li>添加评论
         <p> http://47.92.29.192:8082/video/addVideoComment?videoId=57&commentText=卡哇伊！</p>
+        <p> type  latest-选取最热的五条（和一条当前用户的） list-分页显示</p>
+        <p> videoId 视频id</p>
+        <p> pageNum 当前页（从1开始）-仅在type=list的时候有效</p>
+        <p> pageSize 页大小-仅在type=list的时候有效</p>
     </li>
     <li>操作
         <p> http://47.92.29.192:8082/video/operation/52?type=video&operation=like</p>

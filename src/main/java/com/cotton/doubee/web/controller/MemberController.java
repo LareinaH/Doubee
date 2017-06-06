@@ -1,6 +1,7 @@
 package com.cotton.doubee.web.controller;
 
 import com.cotton.base.common.RestResponse;
+import com.cotton.base.controller.BaseController;
 import com.cotton.base.enumeration.Status;
 import com.cotton.doubee.model.*;
 import com.cotton.doubee.model.VO.MemberSubscriptionVO;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -26,7 +28,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/member")
-public class MemberController {
+public class MemberController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(MemberController.class);
 
@@ -150,8 +152,8 @@ public class MemberController {
      */
     @ResponseBody
     @RequestMapping(value = "/editVideoTag")
-    public RestResponse<Map<String, Object>> editVideoTags(Long tagId,
-                                                           String likeStatus) {
+    public RestResponse<Map<String, Object>> editVideoTags(@RequestParam(required = true) Long tagId,
+                                                           @RequestParam(required = true) String likeStatus) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
@@ -224,7 +226,8 @@ public class MemberController {
      */
     @ResponseBody
     @RequestMapping(value = "/memberSubscriptions")
-    public RestResponse<Map<String, Object>> memberSubscriptions(int pageNum, int pageSize) {
+    public RestResponse<Map<String, Object>> memberSubscriptions(@RequestParam(required = true) int pageNum,
+                                                                 @RequestParam(required = true) int pageSize) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
@@ -266,7 +269,8 @@ public class MemberController {
      */
     @ResponseBody
     @RequestMapping(value = "/editMemberSubscription")
-    public RestResponse<Map<String, Object>> memberSubscriptions(String operation, Long publisherId) {
+    public RestResponse<Map<String, Object>> memberSubscriptions(@RequestParam(required = true) String operation,
+                                                                 @RequestParam(required = true) Long publisherId) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 

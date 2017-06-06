@@ -16,4 +16,49 @@
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
     <result column="commentText" jdbcType="LONGVARCHAR" property="commentText" />
   </resultMap>
+
+
+  <sql id="where1">
+    <where>
+      1=1
+      <if test="map.videoId != null">and videoId = #{map.videoId}</if>
+      <if test="map.commentMemberId != null">and commentMemberId = #{map.commentMemberId}</if>
+      <if test="map.status != null">and status = #{map.status}</if>
+
+      <if test="map.excludeCommentIdList != null">
+         and id NOT IN
+        <foreach collection="map.excludeCommentIdList" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+
+    </where>
+  </sql>
+
+  <resultMap id="videoCommentVOMap" type="com.cotton.doubee.model.VO.VideoCommentVO">
+
+  </resultMap>
+
+  <select id="selectVO" resultMap="videoCommentVOMap">
+    SELECT
+    a.videoId,
+    a.id,
+    a.parentId,
+    a.commentText,
+    a.commentMemberId,
+    a.likeCount,
+    a.dislikeCount,
+    a.createdAt,
+    b.`name`as commentMemberName,
+    b.headPortrait as commentMemberHeadPortrait
+    FROM
+    (SELECT * from video_comment
+
+    <include refid="where1" />
+    )
+    AS a
+    LEFT  JOIN member AS b ON a.commentMemberId = b.id AND b.`status` = 'normal'
+    <if test="map.orderBy != null"> ORDER BY #{map.orderBy}</if>
+
+  </select>
 </mapper>
