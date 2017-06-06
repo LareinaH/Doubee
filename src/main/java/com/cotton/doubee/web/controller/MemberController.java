@@ -157,7 +157,7 @@ public class MemberController {
 
         //校验参数
         if (!likeStatus.equals("like") && !likeStatus.equals("cancel")) {
-            restResponse.setMessage("likeStatus 参数错误！");
+            restResponse.setMessage("likeStatus 只能是 like|cancel！");
             return restResponse;
         }
 
@@ -270,6 +270,11 @@ public class MemberController {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
+        if (StringUtil.isEmpty(operation) || !(operation.equals("add") || operation.equals("cancel"))) {
+            restResponse.setMessage("operation 参数不能为空，且只能是add|cancel");
+            return restResponse;
+        }
+
         //TODO:获取当前用户：
         Member member = new Member();
         member.setId(1L);
@@ -311,6 +316,9 @@ public class MemberController {
                 if (memberSubscriptionService.insert(model)) {
                     restResponse.setCode(RestResponse.OK);
                     map.put("memberSubscriptionId", model.getId());
+
+                    publisher.setSubscribedCount(publisher.getSubscribedCount() + 1);
+                    memberService.update(publisher);
                     return restResponse;
 
                 } else {
@@ -327,6 +335,9 @@ public class MemberController {
                     memberSubscription.setStatus(Status.cancel.toString());
                     memberSubscriptionService.update(memberSubscription);
                 }
+
+                publisher.setSubscribedCount(publisher.getSubscribedCount() - memberSubscriptionList.size());
+                memberService.update(publisher);
             }
             restResponse.setCode(RestResponse.OK);
         }
