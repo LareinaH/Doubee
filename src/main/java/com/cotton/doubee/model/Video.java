@@ -13,9 +13,9 @@ public class Video extends BaseModel {
     private Long id;
 
     /**
-     * 提供者id
+     * 上传视频的会员id
      */
-    private Long providerId;
+    private Long memberId;
 
     /**
      * 标题
@@ -116,21 +116,21 @@ public class Video extends BaseModel {
     }
 
     /**
-     * 获取提供者id
+     * 获取上传视频的会员id
      *
-     * @return providerId - 提供者id
+     * @return memberId - 上传视频的会员id
      */
-    public Long getProviderId() {
-        return providerId;
+    public Long getMemberId() {
+        return memberId;
     }
 
     /**
-     * 设置提供者id
+     * 设置上传视频的会员id
      *
-     * @param providerId 提供者id
+     * @param memberId 上传视频的会员id
      */
-    public void setProviderId(Long providerId) {
-        this.providerId = providerId;
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
     }
 
     /**

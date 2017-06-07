@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 /**
  * Created by Administrator on 2017-05-10.
  */
@@ -29,5 +31,21 @@ public class VideoServiceImpl extends BaseServiceImpl<Video> implements VideoSer
             PageHelper.startPage(1, pageSize);
         }
         return new PageInfo<VideoVO>(videoMapper.goodLuck());
+    }
+
+    @Override
+    public PageInfo<VideoVO> myFavourite(int pageNum, int pageSize, long memberId) {
+        if (pageSize > 0) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        return new PageInfo<VideoVO>(videoMapper.myFavourite(memberId));
+    }
+
+    @Override
+    public PageInfo<VideoVO> queryVO(int pageNum, int pageSize, Map<String, Object> map) {
+        if (pageSize > 0) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        return new PageInfo<VideoVO>(videoMapper.selectVO(map));
     }
 }

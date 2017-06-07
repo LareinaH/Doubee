@@ -12,7 +12,12 @@ public class VideoVO {
     /**
      * 提供者id
      */
-    private Long providerId;
+    private Long memberId;
+
+    /**
+     * 提供者
+     */
+    private String providerName;
 
     /**
      * 标题
@@ -92,12 +97,20 @@ public class VideoVO {
         this.id = id;
     }
 
-    public Long getProviderId() {
-        return providerId;
+    public Long getMemberId() {
+        return memberId;
     }
 
-    public void setProviderId(Long providerId) {
-        this.providerId = providerId;
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
     }
 
     public String getTitle() {

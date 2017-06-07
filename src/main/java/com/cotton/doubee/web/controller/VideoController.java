@@ -59,12 +59,13 @@ public class VideoController extends BaseController {
 
     /**
      * 视频列表（包含视频列表/手气不错/用户上传的列表/收藏的视频列表）
-     * @param type list-视频列表 goodluck-手气不错 upload-用户上传 favourite-收藏列表
+     *
+     * @param type      list-视频列表 goodluck-手气不错 upload-用户上传 favourite-收藏列表
      * @param direction up|down
-     * @param start 起始位置
-     * @param memberId 订阅的会员id
-     * @param pageNum 当前页（从1开始）-仅在type=favourite|upload的时候有效
-     * @param pageSize 页大小-仅在type=list|favourite|upload的时候有效
+     * @param start     起始位置
+     * @param memberId  订阅的会员id
+     * @param pageNum   当前页（从1开始）-仅在type=favourite|upload的时候有效
+     * @param pageSize  页大小-仅在type=list|favourite|upload的时候有效
      * @return
      */
     @ResponseBody
@@ -79,35 +80,35 @@ public class VideoController extends BaseController {
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
         //校验参数
-        if(!(type.equals("list") ||
+        if (!(type.equals("list") ||
                 type.equals("goodluck") ||
                 type.equals("upload") ||
-                type.equals("favourite"))){
+                type.equals("favourite"))) {
             restResponse.setMessage("type 不能为空，并且只能是 list | goodluck|upload|favourite");
             return restResponse;
         }
 
-        if(type.equals("list")){
+        if (type.equals("list")) {
 
-            if(!(direction.equals("up") | direction.equals("down"))){
+            if (!(direction.equals("up") | direction.equals("down"))) {
                 restResponse.setMessage("direction 不能为空，并且只能是 up | down ");
                 return restResponse;
             }
 
-            if(pageSize <= 0){
+            if (pageSize <= 0) {
                 restResponse.setMessage("pageSize 不能为空，并且大于0！");
                 return restResponse;
             }
         }
 
-        if(type.equals("upload") || type.equals("favourite")){
+        if (type.equals("upload") || type.equals("favourite")) {
 
-            if(pageNum <= 0){
+            if (pageNum <= 0) {
                 restResponse.setMessage("pageNum 不能为空，并且大于0！");
                 return restResponse;
             }
 
-            if(pageSize <= 0){
+            if (pageSize <= 0) {
                 restResponse.setMessage("pageSize 不能为空，并且大于0！");
                 return restResponse;
             }
@@ -119,23 +120,22 @@ public class VideoController extends BaseController {
 
         Map<String, Object> map = new HashMap<String, Object>();
         restResponse.setData(map);
-;
-        if(type.equals("list")){
+        ;
+        if (type.equals("list")) {
 
             //构建查询条件
-            Example example = new Example(Video.class);
-            Example.Criteria criteria = example.createCriteria();
+            Map<String,Object> condition = new HashMap<String, Object>();
 
-            if(direction.equals("up")){
-                criteria.andGreaterThan("id",start);
-                example.setOrderByClause("id ASC");
-            }else {
-                criteria.andLessThan("id",start);
-                example.setOrderByClause("id DESC");
+            if (direction.equals("up")) {
+                condition.put("id_greaterThan",start);
+                condition.put("orderBy","a.id ASC");
+            } else {
+                condition.put("id_lessThan",start);
+                condition.put("orderBy","a.id DESC");
             }
-            criteria.andEqualTo("status",Status.normal.toString());
+            condition.put("status", Status.normal.toString());
 
-            PageInfo<Video> pageInfo = videoService.query(1, pageSize, example);
+            PageInfo<VideoVO> pageInfo = videoService.queryVO(1, pageSize, condition);
 
             if (pageInfo == null) {
                 restResponse.setMessage("读取视频列表失败！");
@@ -145,7 +145,7 @@ public class VideoController extends BaseController {
                 map.put("pageList", pageInfo);
             }
 
-        }else if (type.equals("goodluck")){
+        } else if (type.equals("goodluck")) {
 
             PageInfo<VideoVO> videoVOPageInfo = videoService.goodLuck(5);
 
@@ -157,25 +157,25 @@ public class VideoController extends BaseController {
                 map.put("pageList", videoVOPageInfo);
             }
 
-        }else if (type.equals("upload")){
+        } else if (type.equals("upload")) {
 
             //查找上传的用户是否存在
             Member uploadMember = memberService.getById(memberId);
 
-            if(uploadMember == null || !uploadMember.getStatus().equals(Status.normal.toString())){
-                restResponse.setMessage("id为："+memberId + "的用户不存在！");
+            if (uploadMember == null || !uploadMember.getStatus().equals(Status.normal.toString())) {
+                restResponse.setMessage("id为：" + memberId + "的用户不存在！");
                 return restResponse;
             }
 
 
             //构建查询条件
-            Example example = new Example(Video.class);
-            Example.Criteria criteria = example.createCriteria();
+            Map<String,Object> condition = new HashMap<String, Object>();
 
-            criteria.andEqualTo("providerId",memberId);
-            criteria.andEqualTo("status",Status.normal.toString());
+            condition.put("memberId", memberId);
+            condition.put("status", Status.normal.toString());
+            condition.put("orderBy","a.id desc");
 
-            PageInfo<Video> pageInfo = videoService.query(pageNum, pageSize, example);
+            PageInfo<VideoVO> pageInfo = videoService.queryVO(pageNum, pageSize, condition);
 
             if (pageInfo == null) {
                 restResponse.setMessage("读取视频列表失败！");
@@ -185,12 +185,20 @@ public class VideoController extends BaseController {
                 map.put("pageList", pageInfo);
             }
 
-        }else if (type.equals("favourite")){
+        } else if (type.equals("favourite")) {
 
             //获取我喜欢的列表
+            PageInfo<VideoVO> videoVOPageInfo = videoService.myFavourite(pageNum,pageSize,member.getId());
+
+            if (videoVOPageInfo == null) {
+                restResponse.setMessage("读取视频列表失败！");
+
+            } else {
+                restResponse.setCode(RestResponse.OK);
+                map.put("pageList", videoVOPageInfo);
+            }
 
         }
-
 
         return restResponse;
 
@@ -284,8 +292,6 @@ public class VideoController extends BaseController {
                         && !currentUserCommentPageInfo.getList().isEmpty()) {
                     videoCommentPageInfo.getList().add(currentUserCommentPageInfo.getList().get(0));
                 }
-
-
             }
 
             restResponse.setCode(RestResponse.OK);

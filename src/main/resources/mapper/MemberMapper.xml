@@ -8,7 +8,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="ticket" jdbcType="VARCHAR" property="ticket" />
     <result column="bProvider" jdbcType="INTEGER" property="bProvider" />
-    <result column="providerId" jdbcType="BIGINT" property="providerId" />
+    <result column="memberId" jdbcType="BIGINT" property="memberId" />
     <result column="openId" jdbcType="VARCHAR" property="openId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="discription" jdbcType="VARCHAR" property="discription" />

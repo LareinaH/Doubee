@@ -9,6 +9,4 @@ import com.cotton.doubee.model.Member;
 
 public interface MemberService extends BaseService<Member> {
 
-
-    public Member getByProviderId(long providerId);
 }

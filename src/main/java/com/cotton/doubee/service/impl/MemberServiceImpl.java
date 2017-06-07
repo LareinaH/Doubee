@@ -15,13 +15,4 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberServiceImpl extends BaseServiceImpl<Member> implements MemberService {
 
-    @Override
-    public Member getByProviderId(long providerId) {
-
-        Member model = new Member();
-        model.setbProvider(1);
-        model.setProviderId(providerId);
-
-        return selectOne(model);
-    }
 }

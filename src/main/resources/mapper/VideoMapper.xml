@@ -1,48 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cotton.doubee.mapper.VideoMapper">
-  <resultMap id="BaseResultMap" type="com.cotton.doubee.model.Video">
-    <!--
-      WARNING - @mbggenerated
-    -->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="providerId" jdbcType="BIGINT" property="providerId" />
-    <result column="title" jdbcType="VARCHAR" property="title" />
-    <result column="subhead" jdbcType="VARCHAR" property="subhead" />
-    <result column="length" jdbcType="BIGINT" property="length" />
-    <result column="posterUrl" jdbcType="VARCHAR" property="posterUrl" />
-    <result column="url" jdbcType="VARCHAR" property="url" />
-    <result column="source" jdbcType="VARCHAR" property="source" />
-    <result column="videoId" jdbcType="VARCHAR" property="videoId" />
-    <result column="appId" jdbcType="VARCHAR" property="appId" />
-    <result column="tags" jdbcType="VARCHAR" property="tags" />
-    <result column="likeCount" jdbcType="BIGINT" property="likeCount" />
-    <result column="dislikeCount" jdbcType="BIGINT" property="dislikeCount" />
-    <result column="browseCount" jdbcType="BIGINT" property="browseCount" />
-    <result column="commentCount" jdbcType="BIGINT" property="commentCount" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
-    <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.cotton.doubee.model.Video">
+        <!--
+          WARNING - @mbggenerated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="memberId" jdbcType="BIGINT" property="memberId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="subhead" jdbcType="VARCHAR" property="subhead"/>
+        <result column="length" jdbcType="BIGINT" property="length"/>
+        <result column="posterUrl" jdbcType="VARCHAR" property="posterUrl"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="videoId" jdbcType="VARCHAR" property="videoId"/>
+        <result column="appId" jdbcType="VARCHAR" property="appId"/>
+        <result column="tags" jdbcType="VARCHAR" property="tags"/>
+        <result column="likeCount" jdbcType="BIGINT" property="likeCount"/>
+        <result column="dislikeCount" jdbcType="BIGINT" property="dislikeCount"/>
+        <result column="browseCount" jdbcType="BIGINT" property="browseCount"/>
+        <result column="commentCount" jdbcType="BIGINT" property="commentCount"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt"/>
+    </resultMap>
 
+    <resultMap id="videoVOMap" type="com.cotton.doubee.model.VO.VideoVO">
 
+    </resultMap>
 
-  <resultMap id="videoVOMap" type="com.cotton.doubee.model.VO.VideoVO">
-
-  </resultMap>
-
-  <sql id="where1">
-    <where>
-      1=1
-      <if test="map.memberId != null">and memberId = #{map.memberId}</if>
-      <if test="map.status != null">and status = #{map.status}</if>
-    </where>
+    <sql id="baseColumn">
+    a.id,
+    a.memberId,
+    a.title,
+    a.subhead,
+    a.length,
+    a.posterUrl,
+    a.url,
+    a.source,
+    a.videoId,
+    a.appId,
+    a.tags,
+    a.likeCount,
+    a.dislikeCount,
+    a.browseCount,
+    a.commentCount,
+    a.`status`,
+    a.createdAt,
+    a.updateAt,
   </sql>
 
-  <select id="goodLuck" resultMap="videoVOMap">
-    SELECT *
-    FROM `video` AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM `video`)) AS id) AS t2
-    WHERE t1.id >= t2.id
-    ORDER BY t1.id
-  </select>
+    <sql id="where1">
+        <where>
+            1=1
+            <if test="map.id_greaterThan != null">and id &gt; #{map.id_greaterThan}</if>
+            <if test="map.id_lessThan != null">and id &lt; #{map.id_lessThan}</if>
+            <if test="map.memberId != null">and memberId = #{map.memberId}</if>
+            <if test="map.status != null">and status = #{map.status}</if>
+        </where>
+    </sql>
+
+    <select id="goodLuck" resultMap="videoVOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        c.`name` AS providerName
+        FROM `video` AS a JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM `video`)) AS id) AS b
+        LEFT JOIN member AS c ON a.memberId=c.id AND c.`status` = 'normal'
+        WHERE a.id &gt;= b.id
+        ORDER BY a.id
+    </select>
+
+    <select id="myFavourite" resultMap="videoVOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        c.`name` AS providerName
+        FROM (SELECT videoId FROM
+        member_favorite where (memberId = #{memberId} and `status` = 'normal'))AS b
+        LEFT JOIN video AS a ON b.videoId = a.id
+        LEFT JOIN member AS c on a.memberId = c.id AND c.`status` = 'normal'
+
+    </select>
+
+    <select id="selectVO" resultMap="videoVOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        b.`name` AS providerName
+        FROM
+        (SELECT * from video
+
+        <include refid="where1"/>
+        )
+        AS a
+        LEFT JOIN member AS b ON a.memberId = b.id AND b.`status` = 'normal'
+
+        <if test="map.orderBy != null"> ORDER BY ${map.orderBy}</if>
+    </select>
+
 </mapper>
