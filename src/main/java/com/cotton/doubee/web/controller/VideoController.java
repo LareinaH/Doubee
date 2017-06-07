@@ -5,10 +5,8 @@ import com.cotton.base.controller.BaseController;
 import com.cotton.base.enumeration.Status;
 import com.cotton.doubee.model.*;
 import com.cotton.doubee.model.VO.VideoCommentVO;
-import com.cotton.doubee.service.MemberFavoriteService;
-import com.cotton.doubee.service.MemberRecordService;
-import com.cotton.doubee.service.VideoCommentService;
-import com.cotton.doubee.service.VideoService;
+import com.cotton.doubee.model.VO.VideoVO;
+import com.cotton.doubee.service.*;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -37,10 +36,11 @@ public class VideoController extends BaseController {
     @Autowired
     private VideoCommentService videoCommentService;
     @Autowired
+    private MemberService memberService;
+    @Autowired
     private MemberFavoriteService memberFavoriteService;
     @Autowired
     private MemberRecordService memberRecordService;
-
 
     @ResponseBody
     @RequestMapping(value = "/example")
@@ -56,29 +56,141 @@ public class VideoController extends BaseController {
 
     }
 
-    //视频列表（包含视频列表/手气不错/用户上传的列表/收藏的视频列表）
+
+    /**
+     * 视频列表（包含视频列表/手气不错/用户上传的列表/收藏的视频列表）
+     * @param type list-视频列表 goodluck-手气不错 upload-用户上传 favourite-收藏列表
+     * @param direction up|down
+     * @param start 起始位置
+     * @param memberId 订阅的会员id
+     * @param pageNum 当前页（从1开始）-仅在type=favourite|upload的时候有效
+     * @param pageSize 页大小-仅在type=list|favourite|upload的时候有效
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/videos")
-    public RestResponse<Map<String, Object>> videos(int pageNum, int pageSize, String type, String direction) {
+    public RestResponse<Map<String, Object>> videos(@RequestParam() String type,
+                                                    @RequestParam(defaultValue = "up") String direction,
+                                                    @RequestParam(defaultValue = "0") long start,
+                                                    @RequestParam(defaultValue = "0") long memberId,
+                                                    @RequestParam(defaultValue = "0") int pageNum,
+                                                    @RequestParam(defaultValue = "0") int pageSize) {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-        restResponse.setData(map);
+
+        //校验参数
+        if(!(type.equals("list") ||
+                type.equals("goodluck") ||
+                type.equals("upload") ||
+                type.equals("favourite"))){
+            restResponse.setMessage("type 不能为空，并且只能是 list | goodluck|upload|favourite");
+            return restResponse;
+        }
+
+        if(type.equals("list")){
+
+            if(!(direction.equals("up") | direction.equals("down"))){
+                restResponse.setMessage("direction 不能为空，并且只能是 up | down ");
+                return restResponse;
+            }
+
+            if(pageSize <= 0){
+                restResponse.setMessage("pageSize 不能为空，并且大于0！");
+                return restResponse;
+            }
+        }
+
+        if(type.equals("upload") || type.equals("favourite")){
+
+            if(pageNum <= 0){
+                restResponse.setMessage("pageNum 不能为空，并且大于0！");
+                return restResponse;
+            }
+
+            if(pageSize <= 0){
+                restResponse.setMessage("pageSize 不能为空，并且大于0！");
+                return restResponse;
+            }
+        }
 
         //TODO:获取当前用户：
         Member member = new Member();
         member.setId(1L);
 
-        Video model = new Video();
-        PageInfo<Video> pageInfo = videoService.query(pageNum, pageSize, model);
+        Map<String, Object> map = new HashMap<String, Object>();
+        restResponse.setData(map);
+;
+        if(type.equals("list")){
 
-        if (pageInfo == null) {
-            restResponse.setMessage("读取视频列表失败！");
+            //构建查询条件
+            Example example = new Example(Video.class);
+            Example.Criteria criteria = example.createCriteria();
 
-        } else {
-            restResponse.setCode(RestResponse.OK);
-            map.put("pageList", pageInfo);
+            if(direction.equals("up")){
+                criteria.andGreaterThan("id",start);
+                example.setOrderByClause("id ASC");
+            }else {
+                criteria.andLessThan("id",start);
+                example.setOrderByClause("id DESC");
+            }
+            criteria.andEqualTo("status",Status.normal.toString());
+
+            PageInfo<Video> pageInfo = videoService.query(1, pageSize, example);
+
+            if (pageInfo == null) {
+                restResponse.setMessage("读取视频列表失败！");
+
+            } else {
+                restResponse.setCode(RestResponse.OK);
+                map.put("pageList", pageInfo);
+            }
+
+        }else if (type.equals("goodluck")){
+
+            PageInfo<VideoVO> videoVOPageInfo = videoService.goodLuck(5);
+
+            if (videoVOPageInfo == null) {
+                restResponse.setMessage("读取视频列表失败！");
+
+            } else {
+                restResponse.setCode(RestResponse.OK);
+                map.put("pageList", videoVOPageInfo);
+            }
+
+        }else if (type.equals("upload")){
+
+            //查找上传的用户是否存在
+            Member uploadMember = memberService.getById(memberId);
+
+            if(uploadMember == null || !uploadMember.getStatus().equals(Status.normal.toString())){
+                restResponse.setMessage("id为："+memberId + "的用户不存在！");
+                return restResponse;
+            }
+
+
+            //构建查询条件
+            Example example = new Example(Video.class);
+            Example.Criteria criteria = example.createCriteria();
+
+            criteria.andEqualTo("providerId",memberId);
+            criteria.andEqualTo("status",Status.normal.toString());
+
+            PageInfo<Video> pageInfo = videoService.query(pageNum, pageSize, example);
+
+            if (pageInfo == null) {
+                restResponse.setMessage("读取视频列表失败！");
+
+            } else {
+                restResponse.setCode(RestResponse.OK);
+                map.put("pageList", pageInfo);
+            }
+
+        }else if (type.equals("favourite")){
+
+            //获取我喜欢的列表
+
         }
+
 
         return restResponse;
 
@@ -86,9 +198,10 @@ public class VideoController extends BaseController {
 
     /**
      * 视频评论
-     * @param type  latest-选取最热的五条（和一条当前用户的） list-分页显示
-     * @param videoId 视频id
-     * @param pageNum 当前页（从1开始）-仅在type=list的时候有效
+     *
+     * @param type     latest-选取最热的五条（和一条当前用户的） list-分页显示
+     * @param videoId  视频id
+     * @param pageNum  当前页（从1开始）-仅在type=list的时候有效
      * @param pageSize 页大小-仅在type=list的时候有效
      * @return
      */
@@ -101,21 +214,21 @@ public class VideoController extends BaseController {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
-        if(StringUtils.isEmpty(type) || !(type.equals("latest") || type.equals("list"))){
+        if (StringUtils.isEmpty(type) || !(type.equals("latest") || type.equals("list"))) {
             restResponse.setMessage("type 不能为空，并且只能是 latest | list");
             return restResponse;
         }
 
-        if(type.equals("list")){
+        if (type.equals("list")) {
 
-            if(pageNum == 0 || pageSize == 0){
-                restResponse.setMessage("pageNum 和pageSize 不能为空" );
+            if (pageNum == 0 || pageSize == 0) {
+                restResponse.setMessage("pageNum 和pageSize 不能为空");
                 return restResponse;
             }
 
-        }else {
-            pageNum=1;
-            pageSize=5;
+        } else {
+            pageNum = 1;
+            pageSize = 5;
         }
 
         //校验参数
@@ -134,14 +247,14 @@ public class VideoController extends BaseController {
         restResponse.setData(map);
 
         //查询评论列表
-        Map<String,Object > condition = new HashMap<String, Object>();
-        condition.put("videoId",videoId);
-        condition.put("status",Status.normal.toString());
+        Map<String, Object> condition = new HashMap<String, Object>();
+        condition.put("videoId", videoId);
+        condition.put("status", Status.normal.toString());
 
-        if(type.equals("list")){
-            condition.put("orderBy","a.createdAt DESC");
-        }else {
-            condition.put("orderBy","a.likeCount DESC, a.createdAt DESC");
+        if (type.equals("list")) {
+            condition.put("orderBy", "a.createdAt DESC");
+        } else {
+            condition.put("orderBy", "a.likeCount DESC, a.createdAt DESC");
         }
 
         PageInfo<VideoCommentVO> videoCommentPageInfo = videoCommentService.queryVO(pageNum, pageSize, condition);
@@ -149,26 +262,26 @@ public class VideoController extends BaseController {
         if (videoCommentPageInfo != null && videoCommentPageInfo.getList() != null) {
 
             //取出一条当前用户的一条最新的视频评论
-            if (type.equals("latest")){
+            if (type.equals("latest")) {
 
-                pageNum=1;
-                pageSize=1;
-                condition.put("commentMemberId",member.getId());
-                condition.put("orderBy","a.createdAt DESC");
+                pageNum = 1;
+                pageSize = 1;
+                condition.put("commentMemberId", member.getId());
+                condition.put("orderBy", "a.createdAt DESC");
 
                 List<Long> excludeCommentIdList = new LinkedList<Long>();
 
-                for(VideoCommentVO videoCommentVO : videoCommentPageInfo.getList()){
+                for (VideoCommentVO videoCommentVO : videoCommentPageInfo.getList()) {
                     excludeCommentIdList.add(videoCommentVO.getId());
 
                 }
-                condition.put("excludeCommentIdList",excludeCommentIdList);
+                condition.put("excludeCommentIdList", excludeCommentIdList);
 
                 PageInfo<VideoCommentVO> currentUserCommentPageInfo = videoCommentService.queryVO(pageNum, pageSize, condition);
 
-                if(currentUserCommentPageInfo != null
+                if (currentUserCommentPageInfo != null
                         && currentUserCommentPageInfo.getList() != null
-                        && !currentUserCommentPageInfo.getList().isEmpty()){
+                        && !currentUserCommentPageInfo.getList().isEmpty()) {
                     videoCommentPageInfo.getList().add(currentUserCommentPageInfo.getList().get(0));
                 }
 
@@ -186,6 +299,13 @@ public class VideoController extends BaseController {
 
     }
 
+    /**
+     * 添加评论
+     *
+     * @param videoId     视频id
+     * @param commentText 评论内容
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/addVideoComment")
     public RestResponse<Map<String, Object>> addVideoComment(@RequestParam(required = true) long videoId,
@@ -226,8 +346,9 @@ public class VideoController extends BaseController {
 
     /**
      * 视频/评论的操作
-     * @param id 视频/评论id
-     * @param type video/comment
+     *
+     * @param id        视频/评论id
+     * @param type      video/comment
      * @param operation 操作：（favourite/cancelFavourite/like/unlike/accuse）
      * @return
      */
@@ -239,7 +360,8 @@ public class VideoController extends BaseController {
 
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
-        if(!(type.equals("video") || type.equals("videoComment"))){
+        //参数校验
+        if (!(type.equals("video") || type.equals("videoComment"))) {
             restResponse.setMessage("参数错误，无效的type");
             return restResponse;
         }
@@ -252,6 +374,8 @@ public class VideoController extends BaseController {
             return restResponse;
 
         }
+
+
         Map<String, Object> map = new HashMap<String, Object>();
         restResponse.setData(map);
 
@@ -259,21 +383,22 @@ public class VideoController extends BaseController {
         Member member = new Member();
         member.setId(1L);
 
+        //收藏/取消收藏
         if (operation.equals("favourite") || operation.equals("cancelFavourite")) {
 
             if (videoFavouriteOperate(member.getId(), id, operation)) {
                 restResponse.setCode(RestResponse.OK);
             } else {
-                restResponse.setMessage( operation + "视频失败！");
+                restResponse.setMessage(operation + "视频失败！");
             }
 
 
         } else if (operation.equals("like") || operation.equals("unlike") || operation.equals("accuse")) {
 
-            if (videoRecordOperate(member.getId(), id,type, operation)) {
+            if (videoRecordOperate(member.getId(), id, type, operation)) {
                 restResponse.setCode(RestResponse.OK);
             } else {
-                restResponse.setMessage(operation +" " + type + "操作失败！");
+                restResponse.setMessage(operation + " " + type + "操作失败！");
             }
         }
 
@@ -289,18 +414,18 @@ public class VideoController extends BaseController {
         model.setOperation(operation);
         model.setStatus(Status.normal.toString());
 
-        if(type.equals("video")) {
+        if (type.equals("video")) {
             model.setVideoId(id);
-        }else if(type.equals("videoComment")){
+        } else if (type.equals("videoComment")) {
             VideoComment videoComment = videoCommentService.getById(id);
 
-            if(videoComment != null) {
+            if (videoComment != null) {
                 model.setVideoId(videoComment.getVideoId());
                 model.setCommentId(id);
-            }else {
+            } else {
                 return false;
             }
-        }else {
+        } else {
             return false;
         }
 

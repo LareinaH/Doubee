@@ -3,9 +3,11 @@ package com.cotton.doubee.model;
 import com.cotton.base.model.BaseModel;
 import java.util.Date;
 import javax.persistence.*;
-
 @Table(name = "video")
 public class Video extends BaseModel {
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,12 +42,39 @@ public class Video extends BaseModel {
      */
     private String url;
 
+    /**
+     * 视频来源
+     */
+    private String source;
+
+    /**
+     * 优酷videoId
+     */
+    private String videoId;
+
+    /**
+     * 优酷appId
+     */
+    private String appId;
+
+    /**
+     * 标签
+     */
     private String tags;
 
+    /**
+     * 点赞数
+     */
     private Long likeCount;
 
+    /**
+     * 点踩数
+     */
     private Long dislikeCount;
 
+    /**
+     * 浏览数
+     */
     private Long browseCount;
 
     /**
@@ -69,14 +98,18 @@ public class Video extends BaseModel {
     private Date updateAt;
 
     /**
-     * @return id
+     * 获取ID
+     *
+     * @return id - ID
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * @param id
+     * 设置ID
+     *
+     * @param id ID
      */
     public void setId(Long id) {
         this.id = id;
@@ -191,56 +224,126 @@ public class Video extends BaseModel {
     }
 
     /**
-     * @return tags
+     * 获取视频来源
+     *
+     * @return source - 视频来源
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * 设置视频来源
+     *
+     * @param source 视频来源
+     */
+    public void setSource(String source) {
+        this.source = source == null ? null : source.trim();
+    }
+
+    /**
+     * 获取优酷videoId
+     *
+     * @return videoId - 优酷videoId
+     */
+    public String getVideoId() {
+        return videoId;
+    }
+
+    /**
+     * 设置优酷videoId
+     *
+     * @param videoId 优酷videoId
+     */
+    public void setVideoId(String videoId) {
+        this.videoId = videoId == null ? null : videoId.trim();
+    }
+
+    /**
+     * 获取优酷appId
+     *
+     * @return appId - 优酷appId
+     */
+    public String getAppId() {
+        return appId;
+    }
+
+    /**
+     * 设置优酷appId
+     *
+     * @param appId 优酷appId
+     */
+    public void setAppId(String appId) {
+        this.appId = appId == null ? null : appId.trim();
+    }
+
+    /**
+     * 获取标签
+     *
+     * @return tags - 标签
      */
     public String getTags() {
         return tags;
     }
 
     /**
-     * @param tags
+     * 设置标签
+     *
+     * @param tags 标签
      */
     public void setTags(String tags) {
         this.tags = tags == null ? null : tags.trim();
     }
 
     /**
-     * @return likeCount
+     * 获取点赞数
+     *
+     * @return likeCount - 点赞数
      */
     public Long getLikeCount() {
         return likeCount;
     }
 
     /**
-     * @param likeCount
+     * 设置点赞数
+     *
+     * @param likeCount 点赞数
      */
     public void setLikeCount(Long likeCount) {
         this.likeCount = likeCount;
     }
 
     /**
-     * @return dislikeCount
+     * 获取点踩数
+     *
+     * @return dislikeCount - 点踩数
      */
     public Long getDislikeCount() {
         return dislikeCount;
     }
 
     /**
-     * @param dislikeCount
+     * 设置点踩数
+     *
+     * @param dislikeCount 点踩数
      */
     public void setDislikeCount(Long dislikeCount) {
         this.dislikeCount = dislikeCount;
     }
 
     /**
-     * @return browseCount
+     * 获取浏览数
+     *
+     * @return browseCount - 浏览数
      */
     public Long getBrowseCount() {
         return browseCount;
     }
 
     /**
-     * @param browseCount
+     * 设置浏览数
+     *
+     * @param browseCount 浏览数
      */
     public void setBrowseCount(Long browseCount) {
         this.browseCount = browseCount;

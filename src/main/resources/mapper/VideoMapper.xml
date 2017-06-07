@@ -12,6 +12,9 @@
     <result column="length" jdbcType="BIGINT" property="length" />
     <result column="posterUrl" jdbcType="VARCHAR" property="posterUrl" />
     <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="videoId" jdbcType="VARCHAR" property="videoId" />
+    <result column="appId" jdbcType="VARCHAR" property="appId" />
     <result column="tags" jdbcType="VARCHAR" property="tags" />
     <result column="likeCount" jdbcType="BIGINT" property="likeCount" />
     <result column="dislikeCount" jdbcType="BIGINT" property="dislikeCount" />
@@ -21,4 +24,25 @@
     <result column="createdAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updateAt" jdbcType="TIMESTAMP" property="updateAt" />
   </resultMap>
+
+
+
+  <resultMap id="videoVOMap" type="com.cotton.doubee.model.VO.VideoVO">
+
+  </resultMap>
+
+  <sql id="where1">
+    <where>
+      1=1
+      <if test="map.memberId != null">and memberId = #{map.memberId}</if>
+      <if test="map.status != null">and status = #{map.status}</if>
+    </where>
+  </sql>
+
+  <select id="goodLuck" resultMap="videoVOMap">
+    SELECT *
+    FROM `video` AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM `video`)) AS id) AS t2
+    WHERE t1.id >= t2.id
+    ORDER BY t1.id
+  </select>
 </mapper>

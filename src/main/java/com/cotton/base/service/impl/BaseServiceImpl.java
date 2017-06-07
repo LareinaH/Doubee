@@ -64,7 +64,7 @@ public class BaseServiceImpl<ModelType extends BaseModel> implements BaseService
 	public PageInfo<ModelType> query(int pageNum, int pageSize, Object condition) {
 		if (pageSize > 0) {
 			PageHelper.startPage(pageNum, pageSize);
-			PageHelper.orderBy("createdAt DESC");
+			//PageHelper.orderBy("createdAt DESC");
 		}
 		return new PageInfo<ModelType>(mapper.selectByExample(condition));
 	}

@@ -35,20 +35,28 @@
 </ol>
 
 <h2>视频相关</h2>
-    <li>列表
-        <p> http://47.92.29.192:8082/video/videos?pageNum=1&pageSize=5&type=list&direction=up</p>
-        <p>TODO：</p>
+    <li>列表/手气不错/用户上传/收藏夹
+        <p>列表  http://47.92.29.192:8082/video/videos?type=list&direction=down&start=10&pageSize=5</p>
+        <p>手气不错 http://47.92.29.192:8082/video/videos?type=goodluck</p>
+        <p>用户上传 http://47.92.29.192:8082/video/videos?type=upload&pageNum=1&pageSize=10&memberId=38</p>
+        <p>收藏夹 http://47.92.29.192:8082/video/videos?type=favourite&pageNum=1&pageSize=10</p>
+        <p> type list-视频列表 goodluck-手气不错 upload-用户上传 favourite-收藏列表
+        <p> direction up|down
+        <p> start 起始位置
+        <p> memberId 订阅的会员id
+        <p> pageNum 当前页（从1开始）-仅在type=favourite|upload的时候有效</p>
+        <p> pageSize 页大小-仅在type=list|favourite|upload的时候有效</p>
     </li>
     <li>评论列表
         <p> 分页：http://47.92.29.192:8082/video/videoComments?videoId=57&type=list&pageSize=10&pageNum=1</p>
         <p> 5条热评：http://47.92.29.192:8082/video/videoComments?videoId=57&type=latest</p>
-    </li>
-    <li>添加评论
-        <p> http://47.92.29.192:8082/video/addVideoComment?videoId=57&commentText=卡哇伊！</p>
         <p> type  latest-选取最热的五条（和一条当前用户的） list-分页显示</p>
         <p> videoId 视频id</p>
         <p> pageNum 当前页（从1开始）-仅在type=list的时候有效</p>
         <p> pageSize 页大小-仅在type=list的时候有效</p>
+    </li>
+    <li>添加评论
+        <p> http://47.92.29.192:8082/video/addVideoComment?videoId=57&commentText=卡哇伊！</p>
     </li>
     <li>操作
         <p> http://47.92.29.192:8082/video/operation/52?type=video&operation=like</p>
