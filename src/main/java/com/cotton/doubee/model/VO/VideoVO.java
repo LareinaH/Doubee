@@ -89,6 +89,32 @@ public class VideoVO {
      */
     private Date createdAt;
 
+    /**
+     * 用户是否点赞过
+     */
+    boolean bLike;
+
+    /**
+     * 用户是否点踩过
+     */
+    boolean bDislike;
+
+    public boolean isbLike() {
+        return bLike;
+    }
+
+    public void setbLike(boolean bLike) {
+        this.bLike = bLike;
+    }
+
+    public boolean isbDislike() {
+        return bDislike;
+    }
+
+    public void setbDislike(boolean bDislike) {
+        this.bDislike = bDislike;
+    }
+
     public Long getId() {
         return id;
     }
@@ -224,4 +250,5 @@ public class VideoVO {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
 }

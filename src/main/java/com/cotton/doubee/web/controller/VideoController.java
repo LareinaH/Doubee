@@ -3,6 +3,8 @@ package com.cotton.doubee.web.controller;
 import com.cotton.base.common.RestResponse;
 import com.cotton.base.controller.BaseController;
 import com.cotton.base.enumeration.Status;
+import com.cotton.doubee.enumeration.RecordOperation;
+import com.cotton.doubee.enumeration.RecordSelector;
 import com.cotton.doubee.model.*;
 import com.cotton.doubee.model.VO.VideoCommentVO;
 import com.cotton.doubee.model.VO.VideoVO;
@@ -157,8 +159,9 @@ public class VideoController extends BaseController {
                         pageInfo.getList().addAll(extPageInfo.getList());
                     }
                 }
-                restResponse.setCode(RestResponse.OK);
+                buildExInfo4VideoVOList(pageInfo.getList(),memberId);
                 map.put("pageList", pageInfo);
+                restResponse.setCode(RestResponse.OK);
             }
 
         } else if (type.equals("goodluck")) {
@@ -169,8 +172,9 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                restResponse.setCode(RestResponse.OK);
+                buildExInfo4VideoVOList(videoVOPageInfo.getList(),memberId);
                 map.put("pageList", videoVOPageInfo);
+                restResponse.setCode(RestResponse.OK);
             }
 
         } else if (type.equals("upload")) {
@@ -197,8 +201,9 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                restResponse.setCode(RestResponse.OK);
+                buildExInfo4VideoVOList(pageInfo.getList(),memberId);
                 map.put("pageList", pageInfo);
+                restResponse.setCode(RestResponse.OK);
             }
 
         } else if (type.equals("favourite")) {
@@ -210,8 +215,10 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                restResponse.setCode(RestResponse.OK);
+                buildExInfo4VideoVOList(videoVOPageInfo.getList(),memberId);
                 map.put("pageList", videoVOPageInfo);
+                restResponse.setCode(RestResponse.OK);
+
             }
 
         }
@@ -311,6 +318,7 @@ public class VideoController extends BaseController {
             }
 
             restResponse.setCode(RestResponse.OK);
+            buildExInfo4VideoCommentVOList(videoCommentPageInfo.getList(),member.getId());
             map.put("pageList", videoCommentPageInfo);
         } else {
             restResponse.setCode(RestResponse.ERROR);
@@ -515,4 +523,73 @@ public class VideoController extends BaseController {
         return false;
     }
 
+    private void  buildExInfo4VideoVOList(List<VideoVO> videoVOList,long memberId){
+        if(videoVOList!= null && !videoVOList.isEmpty()){
+
+            for (VideoVO videoVO: videoVOList) {
+
+                buildExInfo4VideoVO(videoVO,memberId);
+            }
+        }
+    }
+
+    private void buildExInfo4VideoVO(VideoVO videoVO, long memberId){
+
+        MemberRecord memberRecord = new MemberRecord();
+        memberRecord.setVideoId(videoVO.getId());
+        memberRecord.setMemberId(memberId);
+        memberRecord.setSelector(RecordSelector.video.toString());
+        memberRecord.setSelector(Status.normal.toString());
+
+        List<MemberRecord> memberRecordList = memberRecordService.queryList(memberRecord);
+
+        if(memberRecordList != null  || !memberRecordList.isEmpty()){
+
+            for(MemberRecord memberRecord1 : memberRecordList){
+                if(memberRecord1.getOperation().equals(RecordOperation.like.toString())){
+                    videoVO.setbLike(true);
+                }else if(memberRecord1.getOperation().equals(RecordOperation.dislike.toString())){
+                    videoVO.setbDislike(true);
+                }
+            }
+
+        }
+    }
+
+
+    private void  buildExInfo4VideoCommentVOList(List<VideoCommentVO> videoCommentVOList,long memberId){
+        if(videoCommentVOList!= null && !videoCommentVOList.isEmpty()){
+
+            for (VideoCommentVO videoCommentVO: videoCommentVOList) {
+
+                buildExInfo4VideoCommentVO(videoCommentVO,memberId);
+            }
+        }
+    }
+
+
+    private void buildExInfo4VideoCommentVO(VideoCommentVO videoCommentVO, long memberId){
+
+        MemberRecord memberRecord = new MemberRecord();
+        memberRecord.setVideoId(videoCommentVO.getVideoId());
+        memberRecord.setCommentId(videoCommentVO.getId());
+        memberRecord.setMemberId(memberId);
+        memberRecord.setSelector(RecordSelector.comment.toString());
+        memberRecord.setSelector(Status.normal.toString());
+
+        List<MemberRecord> memberRecordList = memberRecordService.queryList(memberRecord);
+
+        if(memberRecordList != null  || !memberRecordList.isEmpty()){
+
+            for(MemberRecord memberRecord1 : memberRecordList){
+                if(memberRecord1.getOperation().equals(RecordOperation.like.toString())){
+                    videoCommentVO.setbLike(true);
+                }else if(memberRecord1.getOperation().equals(RecordOperation.dislike.toString())){
+                    videoCommentVO.setbDislike(true);
+                }
+            }
+
+        }
+
+    }
 }
