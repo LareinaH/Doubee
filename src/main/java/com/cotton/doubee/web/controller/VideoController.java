@@ -130,7 +130,9 @@ public class VideoController extends BaseController {
                 condition.put("id_greaterThan",start);
                 condition.put("orderBy","a.id ASC");
             } else {
-                condition.put("id_lessThan",start);
+                if(start != 0) {
+                    condition.put("id_lessThan", start);
+                }
                 condition.put("orderBy","a.id DESC");
             }
             condition.put("status", Status.normal.toString());
@@ -141,6 +143,20 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
+
+                if(pageInfo.getList().size() < pageSize){
+                    PageInfo<VideoVO> extPageInfo;
+                    if(direction.equals("down")){
+                        condition.remove("id_lessThan");
+                        extPageInfo = videoService.queryVO(1, pageSize-pageInfo.getList().size(), condition);
+
+                    }else {
+                        extPageInfo = videoService.goodLuck(pageSize-pageInfo.getList().size());
+                    }
+                    if(extPageInfo != null && extPageInfo.getList()!= null){
+                        pageInfo.getList().addAll(extPageInfo.getList());
+                    }
+                }
                 restResponse.setCode(RestResponse.OK);
                 map.put("pageList", pageInfo);
             }
