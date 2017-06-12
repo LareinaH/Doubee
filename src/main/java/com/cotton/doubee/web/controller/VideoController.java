@@ -43,6 +43,8 @@ public class VideoController extends BaseController {
     private MemberFavoriteService memberFavoriteService;
     @Autowired
     private MemberRecordService memberRecordService;
+    @Autowired
+    private MemberSubscriptionService memberSubscriptionService;
 
     @ResponseBody
     @RequestMapping(value = "/example")
@@ -535,11 +537,12 @@ public class VideoController extends BaseController {
 
     private void buildExInfo4VideoVO(VideoVO videoVO, long memberId){
 
+        //查看用户是否点赞过
         MemberRecord memberRecord = new MemberRecord();
         memberRecord.setVideoId(videoVO.getId());
         memberRecord.setMemberId(memberId);
         memberRecord.setSelector(RecordSelector.video.toString());
-        memberRecord.setSelector(Status.normal.toString());
+        memberRecord.setStatus(Status.normal.toString());
 
         List<MemberRecord> memberRecordList = memberRecordService.queryList(memberRecord);
 
@@ -553,6 +556,17 @@ public class VideoController extends BaseController {
                 }
             }
 
+        }
+        //查看用户是否订阅了该作者
+        MemberSubscription memberSubscription = new MemberSubscription();
+        memberSubscription.setMemberId(memberId);
+        memberSubscription.setPublisherId(videoVO.getMemberId());
+        memberSubscription.setStatus(Status.normal.toString());
+
+        List<MemberSubscription> memberSubscriptionList = memberSubscriptionService.queryList(memberSubscription);
+
+        if(memberSubscriptionList != null || !memberSubscriptionList.isEmpty()){
+            videoVO.setbSubscribed(true);
         }
     }
 
@@ -575,7 +589,7 @@ public class VideoController extends BaseController {
         memberRecord.setCommentId(videoCommentVO.getId());
         memberRecord.setMemberId(memberId);
         memberRecord.setSelector(RecordSelector.comment.toString());
-        memberRecord.setSelector(Status.normal.toString());
+        memberRecord.setStatus(Status.normal.toString());
 
         List<MemberRecord> memberRecordList = memberRecordService.queryList(memberRecord);
 

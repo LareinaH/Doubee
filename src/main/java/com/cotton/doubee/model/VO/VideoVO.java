@@ -99,6 +99,20 @@ public class VideoVO {
      */
     boolean bDislike;
 
+    /**
+     * 用户是否订阅该作者
+     * @return
+     */
+    boolean bSubscribed;
+
+    public boolean isbSubscribed() {
+        return bSubscribed;
+    }
+
+    public void setbSubscribed(boolean bSubscribed) {
+        this.bSubscribed = bSubscribed;
+    }
+
     public boolean isbLike() {
         return bLike;
     }
