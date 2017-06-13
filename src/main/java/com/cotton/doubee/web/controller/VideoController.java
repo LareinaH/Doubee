@@ -458,7 +458,7 @@ public class VideoController extends BaseController {
 
         if (type.equals("video")) {
             model.setVideoId(id);
-        } else if (type.equals("videoComment")) {
+        } else if (type.equals("comment")) {
             VideoComment videoComment = videoCommentService.getById(id);
 
             if (videoComment != null) {
