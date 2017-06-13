@@ -565,7 +565,7 @@ public class VideoController extends BaseController {
 
         List<MemberSubscription> memberSubscriptionList = memberSubscriptionService.queryList(memberSubscription);
 
-        if(memberSubscriptionList != null || !memberSubscriptionList.isEmpty()){
+        if(memberSubscriptionList != null && !memberSubscriptionList.isEmpty()){
             videoVO.setbSubscribed(true);
         }
     }

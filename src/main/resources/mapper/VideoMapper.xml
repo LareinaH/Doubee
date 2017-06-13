@@ -76,8 +76,8 @@
         c.`name` AS providerName
         FROM (SELECT videoId FROM
         member_favorite where (memberId = #{memberId} and `status` = 'normal'))AS b
-        LEFT JOIN video AS a ON b.videoId = a.id
-        LEFT JOIN member AS c on a.memberId = c.id AND c.`status` = 'normal'
+        INNER JOIN video AS a ON b.videoId = a.id
+        INNER JOIN member AS c on a.memberId = c.id AND c.`status` = 'normal'
 
     </select>
 
