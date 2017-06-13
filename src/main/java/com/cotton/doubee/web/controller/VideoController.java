@@ -13,6 +13,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -279,6 +280,13 @@ public class VideoController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         restResponse.setData(map);
 
+        //获取视频详情
+
+        VideoVO videoVO = new VideoVO();
+        BeanUtils.copyProperties(video,videoVO);
+        buildExInfo4VideoVO(videoVO,member.getId());
+        map.put("videoInfo",videoVO);
+
         //查询评论列表
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put("videoId", videoId);
@@ -317,11 +325,13 @@ public class VideoController extends BaseController {
                         && !currentUserCommentPageInfo.getList().isEmpty()) {
                     videoCommentPageInfo.getList().add(currentUserCommentPageInfo.getList().get(0));
                 }
+
             }
 
             restResponse.setCode(RestResponse.OK);
             buildExInfo4VideoCommentVOList(videoCommentPageInfo.getList(),member.getId());
             map.put("pageList", videoCommentPageInfo);
+
         } else {
             restResponse.setCode(RestResponse.ERROR);
             restResponse.setMessage("读取视频评论列表失败！");
@@ -393,7 +403,7 @@ public class VideoController extends BaseController {
         RestResponse<Map<String, Object>> restResponse = new RestResponse<Map<String, Object>>();
 
         //参数校验
-        if (!(type.equals("video") || type.equals("videoComment"))) {
+        if (!(type.equals("video") || type.equals("comment"))) {
             restResponse.setMessage("参数错误，无效的type");
             return restResponse;
         }
