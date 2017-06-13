@@ -161,7 +161,7 @@ public class VideoController extends BaseController {
                         pageInfo.getList().addAll(extPageInfo.getList());
                     }
                 }
-                buildExInfo4VideoVOList(pageInfo.getList(),memberId);
+                buildExInfo4VideoVOList(pageInfo.getList(),member.getId());
                 map.put("pageList", pageInfo);
                 restResponse.setCode(RestResponse.OK);
             }
@@ -174,7 +174,7 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                buildExInfo4VideoVOList(videoVOPageInfo.getList(),memberId);
+                buildExInfo4VideoVOList(videoVOPageInfo.getList(),member.getId());
                 map.put("pageList", videoVOPageInfo);
                 restResponse.setCode(RestResponse.OK);
             }
@@ -203,7 +203,7 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                buildExInfo4VideoVOList(pageInfo.getList(),memberId);
+                buildExInfo4VideoVOList(pageInfo.getList(),member.getId());
                 map.put("pageList", pageInfo);
                 restResponse.setCode(RestResponse.OK);
             }
@@ -217,7 +217,7 @@ public class VideoController extends BaseController {
                 restResponse.setMessage("读取视频列表失败！");
 
             } else {
-                buildExInfo4VideoVOList(videoVOPageInfo.getList(),memberId);
+                buildExInfo4VideoVOList(videoVOPageInfo.getList(),member.getId());
                 map.put("pageList", videoVOPageInfo);
                 restResponse.setCode(RestResponse.OK);
 
